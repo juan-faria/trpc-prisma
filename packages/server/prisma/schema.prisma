@@ -9,3 +9,114 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Listing {
+  @@map(name: "listings")
+
+  id String @id @default(uuid())
+  title String @db.VarChar(255)
+  description String @db.VarChar(255)
+  price Int
+  maxPeople Int
+
+  pro Pro @relation(fields: [proId], references: [id])
+  proId String
+
+  users User[]
+
+  skill Skill @relation(fields: [skillId], references: [id])
+  skillId String
+
+  locations Location[]
+
+  reviews Review[]
+
+  medias Media[]
+
+  infoBlocks InfoBlock[]
+}
+
+model Pro {
+  @@map(name: "pros")
+
+  id String @id @default(uuid())
+  name String @db.VarChar(255)
+  avatar String @db.VarChar(255)
+  headline String
+  bio String
+
+  listings Listing[]
+
+  skills Skill[]
+}
+
+model User {
+  @@map(name: "users")
+
+  id String @id @default(uuid())
+  name String @db.VarChar(255)
+  avatar String @db.VarChar(255)
+  listings Listing[]
+}
+
+model Skill {
+  @@map(name: "skills")
+
+  id String @id @default(uuid())
+  label String @db.VarChar(255)
+  packageCta String
+  slug String @db.VarChar(255)
+  whatsIncluded String
+
+  pros Pro[]
+
+  listings Listing[]
+}
+
+model Location {
+  @@map(name: "locations")
+
+  id String @id @default(uuid())
+  placeName String @db.VarChar(255)
+  latitude Float
+  longitude Float
+  timezone String @db.VarChar(255)
+
+  listings Listing[]
+}
+
+model Review {
+  @@map(name: "reviews")
+
+  id String @id @default(uuid())
+  title String @db.VarChar(255)
+  body String
+  createdAt DateTime @default(now())
+  rating Float
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  listingId String
+}
+
+model Media {
+  @@map(name: "medias")
+
+  id String @id @default(uuid())
+  preview String @db.VarChar(255)
+  source String @db.VarChar(255)
+  type String @db.VarChar(255)
+
+  listings Listing[]
+}
+
+model InfoBlock {
+  @@map(name: "infoBlocks")
+
+  id String @id @default(uuid())
+  type String @db.VarChar(255)
+  content String
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  listingId String
+}
+
