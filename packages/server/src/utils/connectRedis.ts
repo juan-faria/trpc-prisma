@@ -11,7 +11,7 @@ const connectRedis = async () => {
     console.log('? Redis client connected...');
     redisClient.set(
       'tRPC',
-      '??Welcome to tRPC with React.js, Express and Typescript!'
+      'Welcome to tRPC Teach Me To assignment using, Prisma, Express and Typescript!'
     );
   } catch (err: any) {
     console.log(err.message);

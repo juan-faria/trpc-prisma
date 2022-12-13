@@ -14,8 +14,9 @@ model Listing {
   @@map(name: "listings")
 
   id String @id @default(uuid())
+  slug String @db.VarChar(255) @unique
   title String @db.VarChar(255)
-  description String @db.VarChar(255)
+  description String
   price Int
   maxPeople Int
 
@@ -56,7 +57,10 @@ model User {
   id String @id @default(uuid())
   name String @db.VarChar(255)
   avatar String @db.VarChar(255)
+
   listings Listing[]
+
+  reviews Review[]
 }
 
 model Skill {
@@ -77,6 +81,7 @@ model Location {
   @@map(name: "locations")
 
   id String @id @default(uuid())
+  adress String @db.VarChar(255)
   placeName String @db.VarChar(255)
   latitude Float
   longitude Float
@@ -94,12 +99,15 @@ model Review {
   createdAt DateTime @default(now())
   rating Float
 
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
   listing Listing @relation(fields: [listingId], references: [id])
   listingId String
 }
 
 model Media {
-  @@map(name: "medias")
+  @@map(name: "media")
 
   id String @id @default(uuid())
   preview String @db.VarChar(255)

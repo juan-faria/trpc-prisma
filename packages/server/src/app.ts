@@ -3,12 +3,13 @@ import dotenv from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { inferAsyncReturnType, initTRPC, TRPCError } from "@trpc/server";
+import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import * as trpcExpress from '@trpc/server/adapters/express';
 import redisClient from './utils/connectRedis';
 import customConfig from './config/default';
 import connectDB from './utils/prisma';
-
+import { findListing, hidrateListing } from './services/listing.services';
+ 
 dotenv.config({ path: path.join(__dirname, './.env') });
 
 const createContext = ({
@@ -25,6 +26,13 @@ const appRouter = t.router({
     const message = await redisClient.get("tRPC");
     return { message };
   }),
+  listing: t.procedure
+  .query(async ({ ctx }) => {
+    const queryParams = ctx.req.query
+    const listing = await findListing(String(queryParams.slug))
+    const hidratedListing = listing ? await hidrateListing(listing) : {}
+    return hidratedListing
+  })
 });
 
 export type AppRouter = typeof appRouter;
